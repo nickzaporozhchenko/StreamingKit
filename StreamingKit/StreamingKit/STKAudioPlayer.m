@@ -674,7 +674,10 @@ static void AudioFileStreamPacketsProc(void* clientData, UInt32 numberBytes, UIn
     }
     else if ([url.scheme caseInsensitiveCompare:@"http"] == NSOrderedSame || [url.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame)
     {
-        retval = [[STKAutoRecoveringHTTPDataSource alloc] initWithHTTPDataSource:[[STKHTTPDataSource alloc] initWithURL:url]];
+        NSArray<NSHTTPCookie *> *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:url];
+        NSDictionary<NSString *, NSString*> *cookieDic = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
+
+        retval = [[STKAutoRecoveringHTTPDataSource alloc] initWithHTTPDataSource:[[STKHTTPDataSource alloc] initWithURL:url httpRequestHeaders:cookieDic]];
     }
     
     return retval;
